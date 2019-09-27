@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-// import axios from 'axios';
+import axios from 'axios';
 
-const studentsStub = {
-  0: {'name': 'Ivo', 'dates': ['2019-12-03']},
-  1: {'name': 'Tana', 'dates': []},
-  2: {'name': 'Natalija', 'dates': []}
-}
+// const studentsStub = {
+//   0: {'name': 'Ivo', 'dates': ['2019-12-03']},
+//   1: {'name': 'Tana', 'dates': []},
+//   2: {'name': 'Natalija', 'dates': []}
+// }
 
-// const URL = "http://127.0.0.1:5000";
+axios.defaults.baseURL = 'http://localhost:5000';
 
 const Main = () => {
   const [students, setStudents] = useState(null);
 
   const fetchStudents = async () => {
-    // const response = await axios.get(URL + "/students");
-    // const responseOk = response && response.status === 200;
-    // if (responseOk) {
-    //   setStudents(await response.data);
-    // }
-    setStudents(studentsStub);
+     const response = await axios.get("/students");
+     const responseOk = response && response.status === 200;
+     if (responseOk) {
+       setStudents(await response.data);
+     }
+//    setStudents(studentsStub);
   };
 
   useEffect(() => {
