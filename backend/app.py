@@ -1,10 +1,12 @@
-from flask import Flask, request, json
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./app.db' #'sqlite:////tmp/test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+CORS(app)
 
 url_students = '/students'
 
@@ -32,6 +34,9 @@ class Student(db.Model):
     def __repr__(self):
         return '<Student %r>' % self.name
 
+    def to_json(self):
+        return { 'id': self.id, 'name': self.name }
+
 class StudentClass(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), 
@@ -42,9 +47,8 @@ class StudentClass(db.Model):
 
 @app.route(url_students, methods=['get'])
 def get():
-    #    l = User.query.all()
-    #return json.dumps(l)
-    return students
+    l = Student.query.all()
+    return jsonify([s.to_json() for s in l])
 
 
 @app.route(url_students, methods=['post'])
