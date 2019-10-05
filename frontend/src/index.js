@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import { createStudent, getStudents } from "./api";
+import { createStudent, getStudents, getStudent } from "./api";
+import { Dates } from "./dates";
+
+const handleSelect = (student, setStudent) => {
+  getStudent(student.id).then(s => setStudent(s.data));
+};
 
 const Main = () => {
   const [students, setStudents] = useState(null);
   const [error, setError] = useState("");
+  const [selectedStudent, setSelectedStudent] = useState(null);
 
   const fetchStudents = async () => {
     try {
@@ -26,8 +32,10 @@ const Main = () => {
         students={students}
         setError={setError}
         setStudents={setStudents}
+        handleSelect={handleSelect}
+        setSelectedStudent={setSelectedStudent}
       />
-      <Dates />
+      <Dates student={selectedStudent} />
       <Statistic />
     </div>
   );
@@ -45,13 +53,26 @@ const handleSubmit = (students, setStudents, setError) => async event => {
   }
 };
 
-const Students = ({ students, setStudents, setError }) => {
+const Students = ({
+  students,
+  setStudents,
+  setError,
+  handleSelect,
+  setSelectedStudent
+}) => {
   return (
     <div>
       [Students]
       <ul>
         {students &&
-          Object.values(students).map((x, id) => <li key={id}>{x.name}</li>)}
+          Object.values(students).map((x, id) => (
+            <li key={id}>
+              {x.name}{" "}
+              <button onClick={() => handleSelect(x, setSelectedStudent)}>
+                >
+              </button>
+            </li>
+          ))}
         {!students && <span>Please add student</span>}
       </ul>
       <form onSubmit={e => handleSubmit(students, setStudents, setError)(e)}>
@@ -61,10 +82,6 @@ const Students = ({ students, setStudents, setError }) => {
       </form>
     </div>
   );
-};
-
-const Dates = () => {
-  return <div>Dates...</div>;
 };
 
 const Statistic = () => {
