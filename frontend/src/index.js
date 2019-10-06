@@ -3,9 +3,14 @@ import ReactDOM from "react-dom";
 import { createStudent, getStudents, getStudent } from "./api";
 import { Dates } from "./dates";
 import "./index.css";
+import parse from "date-fns/parse";
 
-const handleSelect = (student, setStudent) => {
-  getStudent(student.id).then(s => setStudent(s.data));
+const handleSelect = async (student, setStudent) => {
+  let s = await getStudent(student.id);
+  s = s.data;
+  // deserialize date from string
+  s.dates = s.dates.map(d => parse(d, "yyyy-MM-dd", new Date()));
+  setStudent(s);
 };
 
 const Main = () => {
@@ -36,7 +41,7 @@ const Main = () => {
         handleSelect={handleSelect}
         setSelectedStudent={setSelectedStudent}
       />
-      <Dates student={selectedStudent} />
+      <Dates student={selectedStudent} setStudent={setSelectedStudent} />
       <Statistic />
     </div>
   );
@@ -63,7 +68,7 @@ const Students = ({
 }) => {
   return (
     <div className="box">
-      [Students]
+      <span>Students</span>
       <ul>
         {students &&
           Object.values(students).map((x, id) => (
