@@ -3,15 +3,17 @@ import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 
+import "./index.css";
+
 export const Dates = ({ student }) => {
   const [date] = useState(new Date());
 
   return (
-    <div>
+    <div className="box">
       {!student && <span>Please select student</span>}
       {student && (
         <div>
-          <h1>Class dates for {student.name}</h1>
+          <span>Class dates for {student.name}</span>
           <DatePicker inline selected={date} />
           {student.dates && (
             <ul>

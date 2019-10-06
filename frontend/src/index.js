@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { createStudent, getStudents, getStudent } from "./api";
 import { Dates } from "./dates";
+import "./index.css";
 
 const handleSelect = (student, setStudent) => {
   getStudent(student.id).then(s => setStudent(s.data));
@@ -26,7 +27,7 @@ const Main = () => {
   }, []);
 
   return (
-    <div>
+    <div className="content">
       {error && <span>** Erorr: {error}</span>}
       <Students
         students={students}
@@ -61,7 +62,7 @@ const Students = ({
   setSelectedStudent
 }) => {
   return (
-    <div>
+    <div className="box">
       [Students]
       <ul>
         {students &&
@@ -85,7 +86,7 @@ const Students = ({
 };
 
 const Statistic = () => {
-  return <div>Statistic</div>;
+  return <div className="box">Statistic</div>;
 };
 
 ReactDOM.render(<Main />, document.getElementById("root"));

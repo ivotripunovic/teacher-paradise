@@ -1,0 +1,14 @@
+.content {
+  width: 750px;
+  font-size: 16px;
+  line-height: 20px;
+  font-family: "Helvetica", arial, sans-serif;
+  border: solid;
+  display: flex;
+}
+
+.box {
+  border: dotted;
+  border-color: red;
+  width: 300px;
+}
