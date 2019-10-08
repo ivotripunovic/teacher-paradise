@@ -4,6 +4,7 @@ import { createStudent, getStudents, getStudent } from "./api";
 import { Dates } from "./dates";
 import "./index.css";
 import parse from "date-fns/parse";
+import { FixedSizeList as List } from "react-window";
 
 const handleSelect = async (student, setStudent) => {
   let s = await getStudent(student.id);
@@ -14,7 +15,7 @@ const handleSelect = async (student, setStudent) => {
 };
 
 const Main = () => {
-  const [students, setStudents] = useState(null);
+  const [students, setStudents] = useState([]);
   const [error, setError] = useState("");
   const [selectedStudent, setSelectedStudent] = useState(null);
 
@@ -66,21 +67,31 @@ const Students = ({
   handleSelect,
   setSelectedStudent
 }) => {
+  const Row = ({ data, index, style }) => (
+    <div style={style}>
+      {data[index].name}{" "}
+      <button onClick={() => handleSelect(data[index], setSelectedStudent)}>
+        >
+      </button>
+    </div>
+  );
+
   return (
     <div className="box">
       <span>Students</span>
-      <ul>
-        {students &&
-          Object.values(students).map((x, id) => (
-            <li key={id}>
-              {x.name}{" "}
-              <button onClick={() => handleSelect(x, setSelectedStudent)}>
-                >
-              </button>
-            </li>
-          ))}
-        {!students && <span>Please add student</span>}
-      </ul>
+      {students && (
+        <List
+          height={450}
+          itemCount={students.length}
+          itemSize={35}
+          width={300}
+          itemData={students}
+        >
+          {Row}
+        </List>
+      )}
+
+      {!students && <span>Please add student</span>}
       <form onSubmit={e => handleSubmit(students, setStudents, setError)(e)}>
         <label>Name:</label>
         <input type="text" name="name" />
