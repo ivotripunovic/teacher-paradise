@@ -4,14 +4,29 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import "./index.css";
+import { addClassDate, deleteClassDate } from "./api";
+import format from "date-fns/format";
 
 export const Dates = ({ student, setStudent }) => {
-  const handleOnChange = date => {
+  const handleOnChange = async date => {
+    const dateString = format(date, "yyyy-MM-dd");
     if (student.dates.find(x => x.getTime() === date.getTime())) {
-      student.dates = student.dates.filter(x => x.getTime() !== date.getTime());
+      try {
+        await deleteClassDate({ studentId: student.id, date: dateString });
+        student.dates = student.dates.filter(
+          x => x.getTime() !== date.getTime()
+        );
+      } catch (err) {
+        console.log(err);
+      }
     } else {
-      student.dates = [...student.dates, date];
-      student.dates.sort((o1, o2) => o1.getTime() - o2.getTime());
+      try {
+        await addClassDate({ studentId: student.id, date: dateString });
+        student.dates = [...student.dates, date];
+        student.dates.sort((o1, o2) => o1.getTime() - o2.getTime());
+      } catch (err) {
+        console.log(err);
+      }
     }
     // Need to create new instance for the state
     const newstudent = {
