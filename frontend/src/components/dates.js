@@ -3,8 +3,8 @@ import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import "./index.css";
-import { addClassDate, deleteClassDate } from "./api";
+import "../index.css";
+import { addClassDate, deleteClassDate } from "../api";
 import format from "date-fns/format";
 
 export const Dates = ({ student, setStudent }) => {

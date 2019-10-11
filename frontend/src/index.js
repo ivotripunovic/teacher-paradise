@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { createStudent, getStudents, getStudent } from "./api";
-import { Dates } from "./dates";
+import { Dates } from "./components/dates";
 import "./index.css";
 import parse from "date-fns/parse";
 import { FixedSizeList as List } from "react-window";
