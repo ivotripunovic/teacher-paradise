@@ -14,6 +14,7 @@ sudo apt install nginx python3-venv supervisor htop
 In directory where application is located 
 ```
 python3 -m venv venv
+. venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -33,6 +34,9 @@ autorestart=true
 stdout_logfile=/tmp/teacher_out.log
 stderr_logfile=/tmp/teacher_err.log
 
+```
+sudo supervisorctl 
+update
 ```
 
 
