@@ -1,8 +1,12 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
 import datetime
+
+from werkzeug.security import generate_password_hash, check_password_hash
+from itsdangerous import(TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
+import random, string
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./app.db'
@@ -11,15 +15,45 @@ db = SQLAlchemy(app)
 CORS(app)
 
 url_students = '/students'
+url_users = '/users'
+secret_key = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(32))
 
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=True)
+    password_hash = db.Column(db.String(64))
+
+    def hash_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def generate_auth_token(self, expiration=600):
+        s = Serializer(secret_key, expires_in = expiration)
+        return s.dumps({'id': self.id})
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(secret_key)
+        try:
+            data = s.loads(token)
+        except SignatureExpired:
+            # Valid token, but expired
+            return None
+        except BadSignature:
+            # Invalid token
+            return None
+        return data['id']
+
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+    def to_json(self):
+        return {'id': self.id, 'user': self.username}
 
 
 class Student(db.Model):
@@ -97,6 +131,45 @@ def delete_date_student(id, date):
     db.session.delete(s)
     db.session.commit()
     return "", 204
+
+@app.route(url_users, methods=['post'])
+def create_user():
+    data = request.get_json() or {}
+    username=data['user']
+    password=data['pass']
+
+    if username is None or password is None:
+        abort(400) # missing arguments
+    if db.session.query(User).filter_by(username = username).first() is not None:
+        abort(400) # existing user
+
+    user = User(username=username)
+    user.hash_password(password)
+
+    db.session.add(user)
+    db.session.commit()
+    return user.to_json(), 201
+
+@app.route('/login', methods=['post'])
+def login():
+    data = request.get_json() or {}
+    username=data['user']
+    password=data['pass']
+
+    if username is None or password is None:
+        abort(400) # missing arguments
+
+    user = db.session.query(User).filter_by(username=username).first()
+
+    if user is None:
+        abort(401) # user not found
+
+    if not user.verify_password(password):
+        abort(500) # password not correct
+
+    jwt = user.generate_auth_token()
+
+    return jsonify({'token': jwt}), 200
 
 
 if __name__ == '__main__':

@@ -26,7 +26,7 @@ class StudentTest(unittest.TestCase):
         app.config['TESTING'] = True
         db.create_all()
 
-        u = User(username='Admin', email='admin@net.com')
+        u = User(username='Admin', password_hash='admin@net.com')
         sess = db.session
         sess.add(u)
         sess.commit()
@@ -93,6 +93,20 @@ class StudentTest(unittest.TestCase):
         resp = tester.get(url + '/2')
         self.assertEqual(200, resp.status_code)
         self.assertEqual(0, len(resp.get_json()['dates']))
+
+    def test_create_user(self):
+        tester = app.test_client(self)
+        user = { 'user': 'ivo', 'pass':'pa55word'}
+        resp = tester.post('/users', json=user)
+        self.assertEqual(201, resp.status_code)
+        self.assertEqual('ivo', resp.get_json()['user'])
+
+    def test_verify_password(self):
+        tester = app.test_client(self)
+        user = { 'user': 'ivo', 'pass':'pa55word'}
+        resp = tester.post('/login', json=user)
+        self.assertEqual(200, resp.status_code)
+        self.assertIsNotNone(resp.get_json()['token'])
 
 
 if __name__ == '__main__':
