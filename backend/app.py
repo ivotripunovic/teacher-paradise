@@ -1,12 +1,15 @@
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, jsonify, abort, g
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from flask_httpauth import HTTPTokenAuth
 
 import datetime
 
 from werkzeug.security import generate_password_hash, check_password_hash
-from itsdangerous import(TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
-import random, string
+from itsdangerous import(
+    TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
+import random
+import string
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./app.db'
@@ -14,9 +17,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 CORS(app)
 
+auth = HTTPTokenAuth('Bearer')
+
 url_students = '/students'
 url_users = '/users'
-secret_key = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(32))
+secret_key = ''.join(random.choice(
+    string.ascii_uppercase + string.digits) for x in range(32))
 
 
 class User(db.Model):
@@ -32,7 +38,7 @@ class User(db.Model):
         return check_password_hash(self.password_hash, password)
 
     def generate_auth_token(self, expiration=600):
-        s = Serializer(secret_key, expires_in = expiration)
+        s = Serializer(secret_key, expires_in=expiration)
         return s.dumps({'id': self.id})
 
     @staticmethod
@@ -47,7 +53,6 @@ class User(db.Model):
             # Invalid token
             return None
         return data['id']
-
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -66,7 +71,7 @@ class Student(db.Model):
         return '<Student %r>' % self.name
 
     def to_json(self):
-        return {'id': self.id, 'name': self.name}
+        return {'id': self.id, 'name': self.name, 'user_id': self.user_id}
 
 
 class StudentClass(db.Model):
@@ -132,16 +137,17 @@ def delete_date_student(id, date):
     db.session.commit()
     return "", 204
 
+
 @app.route(url_users, methods=['post'])
 def create_user():
     data = request.get_json() or {}
-    username=data['user']
-    password=data['pass']
+    username = data['user']
+    password = data['pass']
 
     if username is None or password is None:
-        abort(400) # missing arguments
-    if db.session.query(User).filter_by(username = username).first() is not None:
-        abort(400) # existing user
+        abort(400)  # missing arguments
+    if db.session.query(User).filter_by(username=username).first() is not None:
+        abort(400)  # existing user
 
     user = User(username=username)
     user.hash_password(password)
@@ -150,26 +156,48 @@ def create_user():
     db.session.commit()
     return user.to_json(), 201
 
+
 @app.route('/login', methods=['post'])
 def login():
     data = request.get_json() or {}
-    username=data['user']
-    password=data['pass']
+    username = data['user']
+    password = data['pass']
 
     if username is None or password is None:
-        abort(400) # missing arguments
+        abort(400)  # missing arguments
 
     user = db.session.query(User).filter_by(username=username).first()
 
     if user is None:
-        abort(401) # user not found
+        abort(401)  # user not found
 
     if not user.verify_password(password):
-        abort(500) # password not correct
+        abort(500)  # password not correct
 
     jwt = user.generate_auth_token()
 
     return jsonify({'token': jwt}), 200
+
+
+@app.route('/protected', methods=['get'])
+@auth.login_required
+def protected():
+    return jsonify({'ivo': 'car', 'id': g.user}), 200
+
+
+@auth.verify_token
+def verify_token(token):
+    g.user = None
+    try:
+        data = Serializer(secret_key).loads(token)
+    except SignatureExpired:
+        return None
+    except BadSignature:
+        return None
+
+    g.user = data['id']
+
+    return True
 
 
 if __name__ == '__main__':

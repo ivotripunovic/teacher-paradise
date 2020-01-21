@@ -51,6 +51,7 @@ class StudentTest(unittest.TestCase):
         resp = tester.post(url, json=student)
         self.assertEqual(200, resp.status_code)
         self.assertEqual('Josh', resp.get_json()['name'])
+        self.assertEqual(1, resp.get_json()['user_id'])
 
     def test_list_student(self):
         tester = app.test_client(self)
@@ -96,17 +97,30 @@ class StudentTest(unittest.TestCase):
 
     def test_create_user(self):
         tester = app.test_client(self)
-        user = { 'user': 'ivo', 'pass':'pa55word'}
+        user = {'user': 'ivo', 'pass': 'pa55word'}
         resp = tester.post('/users', json=user)
         self.assertEqual(201, resp.status_code)
         self.assertEqual('ivo', resp.get_json()['user'])
 
     def test_verify_password(self):
         tester = app.test_client(self)
-        user = { 'user': 'ivo', 'pass':'pa55word'}
+        user = {'user': 'ivo', 'pass': 'pa55word'}
         resp = tester.post('/login', json=user)
         self.assertEqual(200, resp.status_code)
         self.assertIsNotNone(resp.get_json()['token'])
+
+    def test_protected_route(self):
+        tester = app.test_client(self)
+        data = {'user': 'ivo', 'pass': 'pa55word'}
+        resp = tester.post('/login', json=data)
+        token = resp.get_json()['token']
+
+        head = {'Authorization': 'Bearer ' + token}
+        resp = tester.get('/protected', headers=head)
+        self.assertEqual(200, resp.status_code)
+        self.assertIsNotNone(resp.get_json()['id'])
+
+        self.assertEqual(401, tester.get('/protected').status_code)
 
 
 if __name__ == '__main__':
