@@ -5,6 +5,7 @@ import { Dates } from "./components/dates";
 import "./index.css";
 import parse from "date-fns/parse";
 import { FixedSizeList as List } from "react-window";
+import { auth } from './auth';
 
 const handleSelect = async (student, setStudent) => {
   let s = await getStudent(student.id);
@@ -105,4 +106,4 @@ const Statistic = () => {
   return <div className="box">Statistic</div>;
 };
 
-ReactDOM.render(<Main />, document.getElementById("root"));
+ReactDOM.render(auth(false, <Main />), document.getElementById("root"));

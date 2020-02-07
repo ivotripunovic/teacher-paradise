@@ -40,3 +40,20 @@ describe("API calls", () => {
     expect(result.status).toBe(204);
   });
 });
+
+describe("Autenication", () => {
+  // test("Create User", () => {
+  //   const result = await createTeacher({ email: 'ivo@car.com', password:'pa55w0rd' });
+  //   expect(result.data).toBe({password: "password", email: 'ivo@car.com'})
+  // });
+
+  // test("loginOK", () => {
+  //   const result = await login({ email: 'ivo@car.com', password:'pa55w0rd' });
+  //   expect(result.status).toBe(200);
+  //   expect(result.data).toBeTruthy();
+  // });
+
+  // test("loginFailed"); 
+  // test("renewToken");
+  // test("logout");
+});
