@@ -109,6 +109,13 @@ class StudentTest(unittest.TestCase):
         self.assertEqual(200, resp.status_code)
         self.assertIsNotNone(resp.get_json()['token'])
 
+    def test_wrong__password(self):
+        tester = app.test_client(self)
+        user = {'user': 'ivo', 'pass': 'not_good_pass'}
+        resp = tester.post('/login', json=user)
+        self.assertEqual(500, resp.status_code)
+        self.assertIsNone(resp.get_json())
+
     def test_protected_route(self):
         tester = app.test_client(self)
         data = {'user': 'ivo', 'pass': 'pa55word'}
