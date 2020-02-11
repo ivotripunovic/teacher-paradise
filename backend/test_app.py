@@ -26,7 +26,8 @@ class StudentTest(unittest.TestCase):
         app.config['TESTING'] = True
         db.create_all()
 
-        u = User(username='Admin', password_hash='admin@net.com')
+        u = User(username='admin', email='admin@net.com')
+        u.hash_password('sekret')
         sess = db.session
         sess.add(u)
         sess.commit()
@@ -118,17 +119,21 @@ class StudentTest(unittest.TestCase):
 
     def test_protected_route(self):
         tester = app.test_client(self)
-        data = {'user': 'ivo', 'pass': 'pa55word'}
-        resp = tester.post('/login', json=data)
-        token = resp.get_json()['token']
-
-        head = {'Authorization': 'Bearer ' + token}
+        head = self.get_header()
         resp = tester.get('/protected', headers=head)
         self.assertEqual(200, resp.status_code)
         self.assertIsNotNone(resp.get_json()['id'])
 
         self.assertEqual(401, tester.get('/protected').status_code)
 
+
+    def get_header(self):
+        tester = app.test_client(self)
+        data = {'user': 'admin', 'pass': 'sekret'}
+        resp = tester.post('/login', json=data)
+        token = resp.get_json()['token']
+
+        return {'Authorization': 'Bearer ' + token}
 
 if __name__ == '__main__':
     unittest.main()
