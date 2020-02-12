@@ -49,7 +49,7 @@ class StudentTest(unittest.TestCase):
     def test_create_student(self):
         tester = app.test_client(self)
         student = {'name': 'Josh'}
-        resp = tester.post(url, json=student)
+        resp = tester.post(url, json=student, headers=self.get_header())
         self.assertEqual(200, resp.status_code)
         self.assertEqual('Josh', resp.get_json()['name'])
         self.assertEqual(1, resp.get_json()['user_id'])

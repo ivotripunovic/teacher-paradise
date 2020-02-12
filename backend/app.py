@@ -82,14 +82,16 @@ class StudentClass(db.Model):
 
 
 @app.route(url_students, methods=['get'])
+#@auth.login_required
 def get():
     l = Student.query.all()
     return jsonify([s.to_json() for s in l])
 
 
 @app.route(url_students, methods=['post'])
+@auth.login_required
 def create_student():
-    user_id = 1  # TODO set logged user id
+    user_id = g.user
     data = request.get_json() or {}
 
     student = Student(user_id=user_id, name=data['name'])
