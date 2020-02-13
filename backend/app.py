@@ -128,8 +128,12 @@ def update_student(id):
 
 
 @app.route(url_students + '/<int:id>/dates/<string:date>', methods=['post'])
+@auth.login_required
 def add_date_student(id, date):
-    # TODO check logged in user
+    s = Student.query.get_or_404(id)
+    if s.user_id != g.user:
+        return "Not found", 404
+
     d = datetime.datetime.strptime(date, '%Y-%m-%d')
     s = StudentClass(student_id=id, class_date=d)
     db.session.add(s)
@@ -138,8 +142,12 @@ def add_date_student(id, date):
 
 
 @app.route(url_students + '/<int:id>/dates/<string:date>', methods=['delete'])
+@auth.login_required
 def delete_date_student(id, date):
-    # TODO check logged in user
+    s = Student.query.get_or_404(id)
+    if s.user_id != g.user:
+        return "Not found", 404
+
     d = datetime.datetime.strptime(date, '%Y-%m-%d')
     s = StudentClass.query.filter_by(student_id=id, class_date=d).first()
     db.session.delete(s)

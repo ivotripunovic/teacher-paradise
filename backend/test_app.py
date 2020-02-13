@@ -81,7 +81,7 @@ class StudentTest(unittest.TestCase):
 
     def test_add_date(self):
         tester = app.test_client(self)
-        resp = tester.post(url + '/2/dates/2016-08-29')
+        resp = tester.post(url + '/2/dates/2016-08-29', headers=self.get_header())
         self.assertEqual(200, resp.status_code)
 
         resp = tester.get(url + '/2', headers=self.get_header())
@@ -90,7 +90,7 @@ class StudentTest(unittest.TestCase):
 
     def test_delete_date(self):
         tester = app.test_client(self)
-        resp = tester.delete(url + '/2/dates/2016-08-29')
+        resp = tester.delete(url + '/2/dates/2016-08-29', headers=self.get_header())
         self.assertEqual(204, resp.status_code)
 
         resp = tester.get(url + '/2', headers=self.get_header())
