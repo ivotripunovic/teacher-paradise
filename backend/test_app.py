@@ -20,7 +20,6 @@ TESTDB = 'test.db'
 
 class StudentTest(unittest.TestCase):
 
-
     @classmethod
     def setUpClass(cls):
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./' + TESTDB
@@ -81,7 +80,8 @@ class StudentTest(unittest.TestCase):
 
     def test_add_date(self):
         tester = app.test_client(self)
-        resp = tester.post(url + '/2/dates/2016-08-29', headers=self.get_header())
+        resp = tester.post(url + '/2/dates/2016-08-29',
+                           headers=self.get_header())
         self.assertEqual(200, resp.status_code)
 
         resp = tester.get(url + '/2', headers=self.get_header())
@@ -90,7 +90,8 @@ class StudentTest(unittest.TestCase):
 
     def test_delete_date(self):
         tester = app.test_client(self)
-        resp = tester.delete(url + '/2/dates/2016-08-29', headers=self.get_header())
+        resp = tester.delete(url + '/2/dates/2016-08-29',
+                             headers=self.get_header())
         self.assertEqual(204, resp.status_code)
 
         resp = tester.get(url + '/2', headers=self.get_header())
@@ -127,7 +128,6 @@ class StudentTest(unittest.TestCase):
 
         self.assertEqual(401, tester.get('/protected').status_code)
 
-
     def get_header(self):
         tester = app.test_client(self)
         data = {'user': 'admin', 'pass': 'sekret'}
@@ -135,6 +135,7 @@ class StudentTest(unittest.TestCase):
         token = resp.get_json()['token']
 
         return {'Authorization': 'Bearer ' + token}
+
 
 if __name__ == '__main__':
     unittest.main()
