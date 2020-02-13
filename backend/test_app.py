@@ -20,6 +20,7 @@ TESTDB = 'test.db'
 
 class StudentTest(unittest.TestCase):
 
+
     @classmethod
     def setUpClass(cls):
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./' + TESTDB
@@ -56,25 +57,25 @@ class StudentTest(unittest.TestCase):
 
     def test_list_student(self):
         tester = app.test_client(self)
-        resp = tester.get(url)
+        resp = tester.get(url, headers=self.get_header())
         self.assertEqual(200, resp.status_code)
         self.assertEqual(4, len(resp.get_json()))
 
     def test_get_user(self):
         tester = app.test_client(self)
-        resp = tester.get(url + '/2')
+        resp = tester.get(url + '/2', headers=self.get_header())
         self.assertEqual(200, resp.status_code)
         self.assertEqual('Tana', resp.get_json()['name'])
 
     def test_update_user_name(self):
         tester = app.test_client(self)
-        resp = tester.get(url + '/1')
+        resp = tester.get(url + '/1', headers=self.get_header())
         student = resp.get_json()
         student['name'] = 'banana'
         resp = tester.put(url + '/1', json=student)
         self.assertEqual(200, resp.status_code)
 
-        resp = tester.get(url + '/1')
+        resp = tester.get(url + '/1', headers=self.get_header())
         self.assertEqual(200, resp.status_code)
         self.assertEqual('banana', resp.get_json()['name'])
 
@@ -83,7 +84,7 @@ class StudentTest(unittest.TestCase):
         resp = tester.post(url + '/2/dates/2016-08-29')
         self.assertEqual(200, resp.status_code)
 
-        resp = tester.get(url + '/2')
+        resp = tester.get(url + '/2', headers=self.get_header())
         self.assertEqual(200, resp.status_code)
         self.assertEqual('2016-08-29', resp.get_json()['dates'][0])
 
@@ -92,7 +93,7 @@ class StudentTest(unittest.TestCase):
         resp = tester.delete(url + '/2/dates/2016-08-29')
         self.assertEqual(204, resp.status_code)
 
-        resp = tester.get(url + '/2')
+        resp = tester.get(url + '/2', headers=self.get_header())
         self.assertEqual(200, resp.status_code)
         self.assertEqual(0, len(resp.get_json()['dates']))
 

@@ -82,9 +82,9 @@ class StudentClass(db.Model):
 
 
 @app.route(url_students, methods=['get'])
-#@auth.login_required
+@auth.login_required
 def get():
-    l = Student.query.all()
+    l = Student.query.filter_by(user_id=g.user).all()
     return jsonify([s.to_json() for s in l])
 
 
@@ -101,9 +101,12 @@ def create_student():
 
 
 @app.route(url_students + '/<int:id>', methods=['get'])
+@auth.login_required
 def get_student(id):
-    # todo check logged in user
     s = Student.query.get_or_404(id)
+    if s.user_id != g.user:
+        return "Not found", 404
+
     res = s.to_json()
     dates = StudentClass.query.filter_by(student_id=id).all()
     res['dates'] = [x.class_date.strftime('%Y-%m-%d') for x in dates]
