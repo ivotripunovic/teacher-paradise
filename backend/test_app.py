@@ -72,7 +72,7 @@ class StudentTest(unittest.TestCase):
         resp = tester.get(url + '/1', headers=self.get_header())
         student = resp.get_json()
         student['name'] = 'banana'
-        resp = tester.put(url + '/1', json=student)
+        resp = tester.put(url + '/1', json=student, headers=self.get_header())
         self.assertEqual(200, resp.status_code)
 
         resp = tester.get(url + '/1', headers=self.get_header())

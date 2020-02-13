@@ -115,8 +115,12 @@ def get_student(id):
 
 
 @app.route(url_students + '/<int:id>', methods=['put'])
+@auth.login_required
 def update_student(id):
     s = Student.query.get_or_404(id)
+    if s.user_id != g.user:
+        return "Not found", 404
+
     data = request.get_json() or {}
     s.name = data['name']
     db.session.commit()
