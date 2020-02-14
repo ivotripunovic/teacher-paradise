@@ -1,11 +1,5 @@
 """
-test_getall users
-get users
-
-create user
-update user
-add date
-remove date
+Testing flask app
 """
 import unittest
 import os
