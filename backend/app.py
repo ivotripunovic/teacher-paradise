@@ -181,15 +181,15 @@ def login():
     password = data['pass']
 
     if username is None or password is None:
-        abort(400)  # missing arguments
+        return 'Missing argument', 400 # missing arguments
 
     user = db.session.query(User).filter_by(username=username).first()
 
     if user is None:
-        abort(401)  # user not found
+        return 'Abort', 401 # user not found
 
     if not user.verify_password(password):
-        abort(500)  # password not correct
+        return 'Password not correct', 500 # password not correct
 
     jwt = user.generate_auth_token()
 
