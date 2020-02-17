@@ -10,7 +10,7 @@ db.session.add(u)
 db.session.commit()
 
 counter = 0
-with open('names.txt') as f:
+with open('names.txt', encoding='UTF-8') as f:
     for name in f: 
         if counter > 1000:
             break
