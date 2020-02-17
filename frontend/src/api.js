@@ -3,6 +3,7 @@ import axios from "axios";
 axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
 
 const STUDENT_PATH = "/students";
+const USER_PATH = "/users";
 
 export const getStudents = () => axios.get(STUDENT_PATH);
 
@@ -18,3 +19,7 @@ export const addClassDate = ({ studentId, date }) =>
 
 export const deleteClassDate = ({ studentId, date }) =>
   axios.delete(STUDENT_PATH + `/${studentId}/dates/${date}`);
+
+export const createUser = user => axios.post(USER_PATH, user);
+
+export const login = user => axios.post('/login', user);

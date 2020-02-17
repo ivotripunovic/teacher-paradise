@@ -4,7 +4,9 @@ import {
   getStudent,
   updateStudent,
   addClassDate,
-  deleteClassDate
+  deleteClassDate,
+  createUser,
+  login
 } from "./api";
 
 describe("API calls", () => {
@@ -42,18 +44,42 @@ describe("API calls", () => {
 });
 
 describe("Autenication", () => {
-  // test("Create User", () => {
-  //   const result = await createTeacher({ email: 'ivo@car.com', password:'pa55w0rd' });
-  //   expect(result.data).toBe({password: "password", email: 'ivo@car.com'})
-  // });
+  test("Create User", async () => {
+    try {
+      const result = await createUser({ user: "teacher", pass: "s3cr3t" });
+      expect(result.status).toBe(201);
+      expect(result.data.user).toBe("teacher");
+    } catch (e) {
+      // or it is already created
+      expect(e.response.status).toBe(400);
+    }
+  });
 
-  // test("loginOK", () => {
-  //   const result = await login({ email: 'ivo@car.com', password:'pa55w0rd' });
-  //   expect(result.status).toBe(200);
-  //   expect(result.data).toBeTruthy();
-  // });
+  test("loginOK", async () => {
+    const result = await login({ user: "teacher", pass: "s3cr3t" });
+    expect(result.status).toBe(200);
+    expect(result.data.token).toBeTruthy();
+  });
 
-  // test("loginFailed"); 
+  test("loginFailed", async () => {
+    try {
+      const result = await login({ user: "teacherWrong", pass: "s3cr3t" });
+      expect(result).toBeNull();
+    } catch (e) {
+      expect(e.response.status).toBe(401);
+      expect(e.response.data).toBe("Abort");
+    }
+  });
+
+  test("loginPasswordFailed", async () => {
+    try {
+      const result = await login({ user: "teacher", pass: "wrong" });
+      expect(result).toBeNull();
+    } catch (e) {
+      expect(e.response.status).toBe(500);
+    }
+  });
+
   // test("renewToken");
   // test("logout");
 });
