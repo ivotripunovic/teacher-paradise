@@ -10,6 +10,10 @@ import {
 } from "./api";
 
 describe("API calls", () => {
+  beforeAll(async () => {
+    await login({ user: "ivo", pass: "secret" });
+  });
+  
   test("getStudents", async () => {
     const result = await getStudents();
     expect(result.status).toBe(200);

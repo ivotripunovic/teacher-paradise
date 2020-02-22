@@ -22,4 +22,13 @@ export const deleteClassDate = ({ studentId, date }) =>
 
 export const createUser = user => axios.post(USER_PATH, user);
 
-export const login = user => axios.post('/login', user);
+export const login = user => {
+  const promise = axios.post('/login', user);
+  promise.then((response) => {
+      axios.defaults.headers.common.Authorization = `Bearer ${response.data.token}`;
+    })
+    .catch(e => {
+      axios.defaults.headers.common.Authorization = '';
+    });
+  return promise;
+};
