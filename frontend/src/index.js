@@ -5,7 +5,7 @@ import { Dates } from "./components/dates";
 import "./index.css";
 import parse from "date-fns/parse";
 import { FixedSizeList as List } from "react-window";
-import { auth } from './auth';
+import { Login } from "./components/login";
 
 const handleSelect = async (student, setStudent) => {
   let s = await getStudent(student.id);
@@ -19,6 +19,7 @@ const Main = () => {
   const [students, setStudents] = useState([]);
   const [error, setError] = useState("");
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [loggedIn, setLoggedIn] = useState(false);
 
   const fetchStudents = async () => {
     try {
@@ -33,7 +34,11 @@ const Main = () => {
     fetchStudents();
   }, []);
 
-  return (
+  if (!loggedIn) {
+    return <Login setLogin={setLoggedIn} />
+  }
+
+  return (    
     <div className="content">
       {error && <span>** Erorr: {error}</span>}
       <Students
@@ -106,4 +111,4 @@ const Statistic = () => {
   return <div className="box">Statistic</div>;
 };
 
-ReactDOM.render(auth(false, <Main />), document.getElementById("root"));
+ReactDOM.render(<Main />, document.getElementById("root"));
