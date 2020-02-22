@@ -6,6 +6,7 @@ db.create_all()
 
 
 u = User(username='ivo', email='ivo@car.com')
+u.hash_password('secret')
 db.session.add(u)
 db.session.commit()
 
