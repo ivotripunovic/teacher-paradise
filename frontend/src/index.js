@@ -7,6 +7,16 @@ import parse from "date-fns/parse";
 import { FixedSizeList as List } from "react-window";
 import { Login } from "./components/login";
 
+const App = () => {
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  if (!loggedIn) {
+    return <Login setLogin={setLoggedIn} />
+  }
+
+  return <Main />;
+}
+
 const handleSelect = async (student, setStudent) => {
   let s = await getStudent(student.id);
   s = s.data;
@@ -19,7 +29,6 @@ const Main = () => {
   const [students, setStudents] = useState([]);
   const [error, setError] = useState("");
   const [selectedStudent, setSelectedStudent] = useState(null);
-  const [loggedIn, setLoggedIn] = useState(false);
 
   const fetchStudents = async () => {
     try {
@@ -33,10 +42,6 @@ const Main = () => {
   useEffect(() => {
     fetchStudents();
   }, []);
-
-  if (!loggedIn) {
-    return <Login setLogin={setLoggedIn} />
-  }
 
   return (    
     <div className="content">
@@ -111,4 +116,4 @@ const Statistic = () => {
   return <div className="box">Statistic</div>;
 };
 
-ReactDOM.render(<Main />, document.getElementById("root"));
+ReactDOM.render(<App />, document.getElementById("root"));
