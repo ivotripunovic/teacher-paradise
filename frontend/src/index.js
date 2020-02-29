@@ -1,21 +1,33 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import { createStudent, getStudents, getStudent } from "./api";
+import { createStudent, getStudents, getStudent, login } from "./api";
 import { Dates } from "./components/dates";
 import "./index.css";
 import parse from "date-fns/parse";
 import { FixedSizeList as List } from "react-window";
 import { Login } from "./components/login";
 
+const loginSubmit = (setLogin, setError) => e => {
+  e.preventDefault();
+  const user = e.target.user.value;
+  const pass = e.target.pass.value;
+  login({ user, pass })
+    .then(() => setLogin(true))
+    .catch(e => setError(e.response.statusText));
+};
+
 const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [error, setError] = useState([]);
 
   if (!loggedIn) {
-    return <Login setLogin={setLoggedIn} />
+    return (
+      <Login handleSubmit={loginSubmit(setLoggedIn, setError)} error={error} />
+    );
   }
 
   return <Main />;
-}
+};
 
 const handleSelect = async (student, setStudent) => {
   let s = await getStudent(student.id);
@@ -43,7 +55,7 @@ const Main = () => {
     fetchStudents();
   }, []);
 
-  return (    
+  return (
     <div className="content">
       {error && <span>** Erorr: {error}</span>}
       <Students
