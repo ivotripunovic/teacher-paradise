@@ -145,14 +145,19 @@ const countAttendings = student => {
 
 const Statistic = ({ student }) => {
   const stats = countAttendings(student);
+  const toMonth = yearMonth => {
+    const m = yearMonth % 100;
+    const y = Math.floor(yearMonth / 100);
+    const month = new Date(y, m, 1).toLocaleString('default', { month: 'long' });
+    return y + '. ' + month;
+  }
   return (
     <div className="box">
       <h3>Statistic</h3>
-      {student && student.name}
       <ul>
       {stats.map(e => (
-        <li id={e[0]}>
-          {e[0]} - {e[1]}
+        <li key={e[0]}>
+          {toMonth(e[0])} - {e[1]}
         </li>
       ))}
       </ul>
