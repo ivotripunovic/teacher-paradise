@@ -5,8 +5,8 @@ db.drop_all()
 db.create_all()
 
 
-u = User(username='ivo', email='ivo@car.com')
-u.hash_password('secret')
+u = User(username='test', email='ivo@car.com')
+u.hash_password('test')
 db.session.add(u)
 db.session.commit()
 
