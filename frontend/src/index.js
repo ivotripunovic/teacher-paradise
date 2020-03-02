@@ -66,7 +66,7 @@ const Main = () => {
         setSelectedStudent={setSelectedStudent}
       />
       <Dates student={selectedStudent} setStudent={setSelectedStudent} />
-      <Statistic />
+      <Statistic student={selectedStudent} />
     </div>
   );
 };
@@ -124,8 +124,40 @@ const Students = ({
   );
 };
 
-const Statistic = () => {
-  return <div className="box">Statistic</div>;
+const countAttendings = student => {
+  if (!student) {
+    return [];
+  }
+  const dates = student.dates.map(d => new Date(d));
+  const result = new Map();
+
+  for (let d of dates) {
+    const key = d.getFullYear() * 100 + d.getMonth();
+    let value = result.get(key);
+    if (value === undefined) {
+      value = 0;
+    }
+    value += 1;
+    result.set(key, value);
+  }
+  return Array.from(result);
+};
+
+const Statistic = ({ student }) => {
+  const stats = countAttendings(student);
+  return (
+    <div className="box">
+      <h3>Statistic</h3>
+      {student && student.name}
+      <ul>
+      {stats.map(e => (
+        <li id={e[0]}>
+          {e[0]} - {e[1]}
+        </li>
+      ))}
+      </ul>
+    </div>
+  );
 };
 
 ReactDOM.render(<App />, document.getElementById("root"));
