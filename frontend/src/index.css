@@ -4,12 +4,12 @@
   font-size: 16px;
   line-height: 20px;
   font-family: "Helvetica", arial, sans-serif;
-  border: solid;
+  /* border: solid; */
   display: flex;
 }
 
 .box {
   border: dotted;
-  border-color: red;
+  border-color: grey;
   width: 300px;
 }

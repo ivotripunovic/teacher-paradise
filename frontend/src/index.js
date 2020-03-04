@@ -102,7 +102,7 @@ const Students = ({
 
   return (
     <div className="box">
-      <span>Students</span>
+      <h3>Students</h3>
       {students && (
         <List
           height={450}
@@ -119,7 +119,7 @@ const Students = ({
       <form onSubmit={e => handleSubmit(students, setStudents, setError)(e)}>
         <label>Name:</label>
         <input type="text" name="name" />
-        <input type="submit" value="Submit" />
+        <input type="submit" value="Add" />
       </form>
     </div>
   );

@@ -43,20 +43,20 @@ export const Dates = ({ student, setStudent }) => {
       {!student && <span>Please select student</span>}
       {student && (
         <div>
-          <span>Class dates for {student.name}</span>
+          <span>Class dates for <b>{student.name}</b></span>
           <DatePicker
             inline
             openToDate={new Date()}
             highlightDates={student.dates}
             onChange={handleOnChange}
           />
-          {student.dates && (
+          {/* //debug// {student.dates && (
             <ul>
               {student.dates.map((d, key) => (
                 <li key={key}>{d.toLocaleDateString()}</li>
               ))}
             </ul>
-          )}
+          )} */}
         </div>
       )}
     </div>
