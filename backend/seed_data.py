@@ -15,7 +15,7 @@ with open('names.txt', encoding='UTF-8') as f:
     for name in f: 
         if counter > 1000:
             break
-        s = Student(name=name, user_id=u.id)
+        s = Student(name=name.strip(), user_id=u.id)
         db.session.add(s)
         db.session.commit()
 
