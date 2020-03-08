@@ -35,9 +35,11 @@ stdout_logfile=/tmp/teacher_out.log
 stderr_logfile=/tmp/teacher_err.log
 
 ```
-sudo supervisorctl 
-update
-```
+
+```sudo supervisorctl update```
+
+When upgrading backend application to refresh execute:  
+```sudo supervisorctl restart teacher_paradise```
 
 
 Nginx will serve the static files and be reverse proxy to our backend code.
@@ -68,4 +70,4 @@ server {
 ```
 
 
-everything is hosted on VPS
+Everything is hosted on VPS [100$ credits to try out VPS](https://www.vultr.com/?ref=8482267-6G) 
