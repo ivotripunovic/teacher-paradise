@@ -66,6 +66,7 @@ class Student(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'),
                         nullable=False)
     name = db.Column(db.String(80), nullable=False)
+    studentClass = db.relationship('StudentClass', cascade='all, delete')
 
     def __repr__(self):
         return '<Student %r>' % self.name
@@ -127,6 +128,18 @@ def update_student(id):
     return s.to_json()
 
 
+@app.route(url_students + '/<int:id>', methods=['delete'])
+@auth.login_required
+def delete_student(id):
+    s = Student.query.get_or_404(id)
+    if s.user_id != g.user:
+        return "Not found", 404
+
+    db.session.delete(s)
+    db.session.commit()
+    return "", 204
+
+
 @app.route(url_students + '/<int:id>/dates/<string:date>', methods=['post'])
 @auth.login_required
 def add_date_student(id, date):
@@ -181,15 +194,15 @@ def login():
     password = data['pass']
 
     if username is None or password is None:
-        return 'Missing argument', 400 # missing arguments
+        return 'Missing argument', 400  # missing arguments
 
     user = db.session.query(User).filter_by(username=username).first()
 
     if user is None:
-        return 'Abort', 401 # user not found
+        return 'Abort', 401  # user not found
 
     if not user.verify_password(password):
-        return 'Password not correct', 500 # password not correct
+        return 'Password not correct', 500  # password not correct
 
     jwt = user.generate_auth_token()
 

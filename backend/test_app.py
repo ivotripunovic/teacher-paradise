@@ -52,7 +52,7 @@ class StudentTest(unittest.TestCase):
         tester = app.test_client(self)
         resp = tester.get(url, headers=self.get_header())
         self.assertEqual(200, resp.status_code)
-        self.assertEqual(4, len(resp.get_json()))
+        self.assertTrue(len(resp.get_json()) >= 3)
 
     def test_get_user(self):
         tester = app.test_client(self)
@@ -136,6 +136,14 @@ class StudentTest(unittest.TestCase):
         token = resp.get_json()['token']
 
         return {'Authorization': 'Bearer ' + token}
+
+    def test_delete_student(self):
+        tester = app.test_client(self)
+        resp = tester.delete('/students/4', headers=self.get_header())
+        self.assertEqual(204, resp.status_code)
+
+        resp = tester.delete('/students/4', headers=self.get_header())
+        self.assertEqual(404, resp.status_code)
 
 
 if __name__ == '__main__':
