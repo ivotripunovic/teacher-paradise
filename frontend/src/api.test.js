@@ -6,12 +6,13 @@ import {
   addClassDate,
   deleteClassDate,
   createUser,
-  login
+  login,
+  deleteStudent
 } from "./api";
 
 describe("API calls", () => {
   beforeAll(async () => {
-    await login({ user: "ivo", pass: "secret" });
+    await login({ user: "test", pass: "test" });
   });
   
   test("getStudents", async () => {
@@ -23,6 +24,11 @@ describe("API calls", () => {
     const result = await createStudent("Ivo");
     expect(result.status).toBe(200);
     expect(result.data.name).toBe("Ivo");
+  });
+
+  test("deleteStudent", async() => {
+    const result = await deleteStudent(7)
+    expect(result.status).toBe(204)
   });
 
   test("getStudent by id", async () => {
