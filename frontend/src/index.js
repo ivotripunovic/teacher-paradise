@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import { createStudent, getStudents, getStudent, login } from "./api";
+import { createStudent, getStudents, getStudent, login, deleteStudent } from "./api";
 import { Dates } from "./components/dates";
 import "./index.css";
 import parse from "date-fns/parse";
@@ -84,6 +84,20 @@ const handleSubmit = (students, setStudents, setError) => async event => {
   }
 };
 
+const handleDeleteStudent = async (student, setStudents, students, setError, setSelectedStudent) => {
+  if (!window.confirm('Do you want to delete: ' + student.name + ' ?')) {
+    return;
+  }
+  try {
+    await deleteStudent(student.id);
+    console.log('yea ' + student.id)
+    setStudents(students.filter(item => item.id !== student.id))
+    setSelectedStudent(null)
+  } catch(error) {
+    setError("Cound not delete " + student.name, " " + error.message);
+  }
+}
+
 const Students = ({
   students,
   setStudents,
@@ -97,6 +111,9 @@ const Students = ({
       <button onClick={() => handleSelect(data[index], setSelectedStudent)}>
         >
       </button>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <button onClick={() => handleDeleteStudent(data[index], setStudents, students, setError, setSelectedStudent)}>X</button>
+
     </div>
   );
 
